@@ -78,9 +78,11 @@ class Game():
 
         for i, point in enumerate(self.points):
             index = newPoints.index(point)
-            del newPoints[index]
-            self.reloadBoard()
-        self.points = newPoints
+            if point[0] == tile:
+                del newPoints[index]
+                self.points = newPoints
+
+        self.reloadBoard()
 
     def reloadBoard(self):
 
@@ -89,7 +91,7 @@ class Game():
 
         for static in self.level.statics:
             tile, colour = static
-            self.graphicsManager.drawEndPoint(tile, colour)
+            self.graphicsManager.drawEndStatics(tile, colour)
 
         for array in self.points:
             self.graphicsManager.drawEndPoint(array[0], array[1])

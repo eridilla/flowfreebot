@@ -64,6 +64,10 @@ class GraphicsManager():
 
     def drawEndPoint(self, tile, colour):
         centrePoint = self.level.centrePoints[tile]
+        pygame.draw.circle(self.logic.screen, colour, centrePoint, math.floor(self.level.length / 3), 25)
+
+    def drawEndStatics(self, tile, colour):
+        centrePoint = self.level.centrePoints[tile]
         pygame.draw.circle(self.logic.screen, colour, centrePoint, math.floor(self.level.length / 3))
 
     # def drawLine(self, tile1, tile2, colour):
