@@ -26,11 +26,13 @@ class Algorithms:
 
     def dfs(self):
         self.draw_board_console()
-
         static = self.static_coords[0]
         currentpos = [static[0], static[1]]
 
         possible_moves = self.check_possible_moves(currentpos)
+
+        self.game.addConnection(2,3,[255,0,0])
+        self.game.reloadBoard()
 
         # while True:
         #     if currentpos[1]+1 < self.level.width:
@@ -49,9 +51,6 @@ class Algorithms:
     def generate_line(self, static):
         moves_made = []
         currentpos = [static[0], static[1]]
-
-
-
         return
 
     def check_end(self, currentpos, color):

@@ -16,5 +16,5 @@ class MouseManager():
             self.mousePressed = False
 
 
-        elif self.mousePressed:
-            self.game.mouseMoved()
+        # elif self.mousePressed:
+        #     self.game.mouseMoved()

@@ -66,21 +66,21 @@ class GraphicsManager():
         centrePoint = self.level.centrePoints[tile]
         pygame.draw.circle(self.logic.screen, colour, centrePoint, math.floor(self.level.length / 3))
 
-    def drawLine(self, tile1, tile2, colour):
-
-        tile1Centre = self.level.centrePoints[tile1]
-        tile2Centre = self.level.centrePoints[tile2]
-
-        width = math.floor(self.level.length / 4 + 0.5)
-
-        if width % 2 == 0:
-            width += 1
-        self.radius = math.floor(width / 2)
-
-        rect = pygame.draw.line(self.logic.screen, colour, tile1Centre, tile2Centre, width)
-
-    def drawSmoothTurn(self, point, colour):
-        pygame.draw.circle(self.logic.screen, colour, point, self.radius)
+    # def drawLine(self, tile1, tile2, colour):
+    #
+    #     tile1Centre = self.level.centrePoints[tile1]
+    #     tile2Centre = self.level.centrePoints[tile2]
+    #
+    #     width = math.floor(self.level.length / 4 + 0.5)
+    #
+    #     if width % 2 == 0:
+    #         width += 1
+    #     self.radius = math.floor(width / 2)
+    #
+    #     rect = pygame.draw.line(self.logic.screen, colour, tile1Centre, tile2Centre, width)
+    #
+    # def drawSmoothTurn(self, point, colour):
+    #     pygame.draw.circle(self.logic.screen, colour, point, self.radius)
 
     def drawWinScreen(self):
         screenWidth, screenHeight = self.logic.screen.get_size()
