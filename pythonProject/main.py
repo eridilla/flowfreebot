@@ -101,8 +101,8 @@ class Game():
 
         # self.smoothenTurns()
 
-        # if checker.checkWin(self.level.statics, self.level.rectangles, self.findConnections):
-        #     self.graphicsManager.drawWinScreen()
+        if checker.checkWin(self.level.statics, self.level.rectangles, self.points):
+            self.graphicsManager.drawWinScreen()
 
     def addPoint(self, tile, colour):
         self.points.append((tile, colour))
@@ -190,6 +190,7 @@ class Game():
 
                 if self.selectedColour != [0, 0, 0]:
                     self.addPoint(i, self.selectedColour)
+                    return
 
                 # connectionsFound = self.findConnections(i)
                 # if connectionsFound[0] == 1:
