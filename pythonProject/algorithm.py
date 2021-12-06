@@ -1,3 +1,5 @@
+import time
+
 import pygame, sys, math, json, numpy, webcolors, pyautogui, main
 
 
@@ -5,9 +7,11 @@ class Algorithms:
     def __init__(self, game, level):
         self.game_board = [[0 for y in range(level.height)] for x in range(level.width)]
         self.game_board_enum = numpy.arange(level.width * level.height).reshape(level.height, level.width)
+        self.colors = [0, 'r', 'g', 'b', 'c', 'y', 'm']
         self.static_coords = []
         self.game = game
         self.level = level
+        self.empty_spaces = self.get_empty_spaces()
 
         for static in level.statics:
             counter = 0
@@ -24,15 +28,49 @@ class Algorithms:
 
                     counter += 1
 
-    def dfs(self):
-        self.draw_board_console()
-        static = self.static_coords[0]
-        currentpos = [static[0], static[1]]
+    def dfs(self, index):
+        pos = self.empty_spaces[index]
+        coords = self.get_coords_from_index(pos)
 
-        possible_moves = self.check_possible_moves(currentpos)
+        if self.game_board[coords[0]][coords[1]] == self.colors[6]:
+            self.game_board[coords[0]][coords[1]] = self.colors[1]
+            self.draw_board_console()
+            # time.sleep(0.1)
 
-        self.game.addConnection(2,3,[255,0,0])
-        self.game.reloadBoard()
+            if index - 1 < 0:
+                return
+
+            self.dfs(index - 1)
+        else:
+            self.game_board[coords[0]][coords[1]] = self.colors[self.colors.index(self.game_board[coords[0]][coords[1]]) + 1]
+            self.draw_board_console()
+            # time.sleep(0.1)
+            self.dfs(len(self.empty_spaces) - 1)
+
+
+
+        # if delta < 36:
+        #     coords = self.get_coords_from_index(delta)
+        #
+        #     if self.game_board[coords[0]][coords[1]] == 0:
+        #         self.game.addPoint(delta, [255, 0, 0])
+        #         self.game.reloadBoard()
+        #
+        #     delta += 1
+        #     self.dfs(delta)
+
+        # self.draw_board_console()
+        #
+        # for i in reversed(range(self.level.height)):
+        #     for j in reversed(range(self.level.width)):
+        #         if self.game_board[i][j] == 0:
+        #             self.game_board[i][j] = 'A'
+        #             self.draw_board_console()
+        #             self.game.addPoint(self.game_board_enum[i][j], [255, 0, 0])
+        #             self.game.reloadBoard()
+        #             time.sleep(0.1)
+
+
 
         # while True:
         #     if currentpos[1]+1 < self.level.width:
@@ -47,6 +85,32 @@ class Algorithms:
         #     main.Game.reloadBoard(self.game)
 
         return
+
+    def get_empty_spaces(self):
+        empty_spaces = list(range(self.level.width * self.level.height))
+
+        for static in self.level.statics:
+            empty_spaces.remove(static[0])
+
+        return empty_spaces
+
+    def get_index_from_color(self, color):
+        for i, colorX in enumerate(self.colors):
+            if colorX == color:
+                return i
+
+    def delta_is_static(self, delta):
+        for static in self.level.statics:
+            if static[0] == delta:
+                return True
+
+        return False
+
+    def get_coords_from_index(self, index):
+        for i in range(self.level.height):
+            for j in range(self.level.width):
+                if index == self.game_board_enum[i][j]:
+                    return [i, j]
 
     def generate_line(self, static):
         moves_made = []

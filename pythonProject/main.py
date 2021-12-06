@@ -1,6 +1,8 @@
 import copy
 import json
 import math
+import time
+
 import pygame
 import sys
 
@@ -158,7 +160,7 @@ class Game():
         algorithms = algorithm.Algorithms(self, self.level)
 
         if self.graphicsManager.rectangles[0].collidepoint(pos):
-            algorithms.dfs()
+            algorithms.dfs(len(algorithms.empty_spaces) - 1)
 
         if self.graphicsManager.rectangles[3].collidepoint(pos):
             print("\nReloading game\n")
