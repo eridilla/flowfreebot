@@ -16,11 +16,11 @@ class Algorithms:
                 for j in range(level.width):
                     if static[0] == counter:
                         if webcolors.rgb_to_name(static[1])[0] == 'l':
-                            self.game_board[i][j] = 'g'
-                            self.static_coords.append([i, j, 'g'])
+                            self.game_board[i][j] = 'G'
+                            self.static_coords.append([i, j, 'G'])
                         else:
-                            self.game_board[i][j] = webcolors.rgb_to_name(static[1])[0]
-                            self.static_coords.append([i, j, webcolors.rgb_to_name(static[1])[0]])
+                            self.game_board[i][j] = webcolors.rgb_to_name(static[1])[0].upper()
+                            self.static_coords.append([i, j, webcolors.rgb_to_name(static[1])[0].upper()])
 
                     counter += 1
 
