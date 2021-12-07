@@ -1,13 +1,14 @@
 import time
 
-import pygame, sys, math, json, numpy, webcolors, pyautogui, main
+import pygame, sys, math, json, numpy, webcolors, pyautogui, main, checker
 
 
 class Algorithms:
     def __init__(self, game, level):
         self.game_board = [[0 for y in range(level.height)] for x in range(level.width)]
         self.game_board_enum = numpy.arange(level.width * level.height).reshape(level.height, level.width)
-        self.colors = [0, 'r', 'g', 'b', 'c', 'y', 'm']
+        # self.colors = [0, 'r', 'g', 'b', 'c', 'y', 'm']
+        # self.colors = [0, 'r', 'g']
         self.static_coords = []
         self.game = game
         self.level = level
@@ -28,28 +29,33 @@ class Algorithms:
 
                     counter += 1
 
+        self.colors = self.get_colors_from_game()
+
     def dfs(self, index):
-        pos = self.empty_spaces[index]
-        coords = self.get_coords_from_index(pos)
+        if not checker.checkWin(self.level.statics, self.level.rectangles, self.game.points):
+            pos = self.empty_spaces[index]
+            coords = self.get_coords_from_index(pos)
 
-        if self.game_board[coords[0]][coords[1]] == self.colors[6]:
-            self.game_board[coords[0]][coords[1]] = self.colors[1]
-            self.draw_board_console()
-            self.game.addPoint(pos, self.get_color_rgb(self.colors[1]))
-            self.game.reloadBoard()
-            # time.sleep(0.5)
+            if self.game_board[coords[0]][coords[1]] == self.colors[len(self.colors) - 1]:
+                self.game_board[coords[0]][coords[1]] = self.colors[1]
+                self.draw_board_console()
+                self.game.removeTile(pos)
+                self.game.addPoint(pos, self.get_color_rgb(self.colors[1]))
+                self.game.reloadBoard()
+                # time.sleep(0.1)
 
-            if index - 1 < 0:
-                return
+                if index - 1 < 0:
+                    return
 
-            self.dfs(index - 1)
-        else:
-            self.game_board[coords[0]][coords[1]] = self.colors[self.colors.index(self.game_board[coords[0]][coords[1]]) + 1]
-            self.draw_board_console()
-            self.game.addPoint(pos, self.get_color_rgb(self.colors[self.colors.index(self.game_board[coords[0]][coords[1]])]))
-            self.game.reloadBoard()
-            # time.sleep(0.5)
-            self.dfs(len(self.empty_spaces) - 1)
+                self.dfs(index - 1)
+            else:
+                self.game_board[coords[0]][coords[1]] = self.colors[self.colors.index(self.game_board[coords[0]][coords[1]]) + 1]
+                self.draw_board_console()
+                self.game.removeTile(pos)
+                self.game.addPoint(pos, self.get_color_rgb(self.colors[self.colors.index(self.game_board[coords[0]][coords[1]])]))
+                self.game.reloadBoard()
+                # time.sleep(0.1)
+                self.dfs(len(self.empty_spaces) - 1)
 
 
 
@@ -89,6 +95,15 @@ class Algorithms:
         #     main.Game.reloadBoard(self.game)
 
         return
+
+    def get_colors_from_game(self):
+        colors = [0]
+
+        for i, color in enumerate(self.static_coords):
+            if i % 2 == 0:
+                colors.append(color[2].lower())
+
+        return colors
 
     def get_color_rgb(self, color):
         if color == 'r':
