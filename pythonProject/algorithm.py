@@ -35,7 +35,9 @@ class Algorithms:
         if self.game_board[coords[0]][coords[1]] == self.colors[6]:
             self.game_board[coords[0]][coords[1]] = self.colors[1]
             self.draw_board_console()
-            # time.sleep(0.1)
+            self.game.addPoint(pos, self.get_color_rgb(self.colors[1]))
+            self.game.reloadBoard()
+            # time.sleep(0.5)
 
             if index - 1 < 0:
                 return
@@ -44,7 +46,9 @@ class Algorithms:
         else:
             self.game_board[coords[0]][coords[1]] = self.colors[self.colors.index(self.game_board[coords[0]][coords[1]]) + 1]
             self.draw_board_console()
-            # time.sleep(0.1)
+            self.game.addPoint(pos, self.get_color_rgb(self.colors[self.colors.index(self.game_board[coords[0]][coords[1]])]))
+            self.game.reloadBoard()
+            # time.sleep(0.5)
             self.dfs(len(self.empty_spaces) - 1)
 
 
@@ -85,6 +89,20 @@ class Algorithms:
         #     main.Game.reloadBoard(self.game)
 
         return
+
+    def get_color_rgb(self, color):
+        if color == 'r':
+            return [255, 0, 0]
+        elif color == 'g':
+            return [0, 255, 0]
+        elif color == 'b':
+            return [0, 0, 255]
+        elif color == 'c':
+            return [0, 255, 255]
+        elif color == 'y':
+            return [255, 255, 0]
+        elif color == 'm':
+            return [255, 0, 255]
 
     def get_empty_spaces(self):
         empty_spaces = list(range(self.level.width * self.level.height))

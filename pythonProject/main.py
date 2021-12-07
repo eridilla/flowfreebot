@@ -87,7 +87,6 @@ class Game():
         self.reloadBoard()
 
     def reloadBoard(self):
-
         # self.buttons = self.graphicsManager.drawBoard(self.level)
         self.graphicsManager.drawBoard(self.level)
 
@@ -160,6 +159,7 @@ class Game():
         algorithms = algorithm.Algorithms(self, self.level)
 
         if self.graphicsManager.rectangles[0].collidepoint(pos):
+            sys.setrecursionlimit(2857)
             algorithms.dfs(len(algorithms.empty_spaces) - 1)
 
         if self.graphicsManager.rectangles[3].collidepoint(pos):
