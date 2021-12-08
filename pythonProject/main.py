@@ -1,7 +1,4 @@
 import copy
-import json
-import math
-import time
 
 import pygame
 import sys
@@ -161,6 +158,9 @@ class Game():
         if self.graphicsManager.rectangles[0].collidepoint(pos):
             sys.setrecursionlimit(2857)
             algorithms.dfs(len(algorithms.empty_spaces) - 1)
+
+        if self.graphicsManager.rectangles[1].collidepoint(pos):
+            algorithms.backtrack()
 
         if self.graphicsManager.rectangles[3].collidepoint(pos):
             print("\nReloading game\n")

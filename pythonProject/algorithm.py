@@ -1,14 +1,13 @@
 import time
 
-import pygame, sys, math, json, numpy, webcolors, pyautogui, main, checker
+import pygame, sys, math, json, numpy, webcolors, pyautogui, main
 
 
 class Algorithms:
     def __init__(self, game, level):
         self.game_board = [[0 for y in range(level.height)] for x in range(level.width)]
         self.game_board_enum = numpy.arange(level.width * level.height).reshape(level.height, level.width)
-        # self.colors = [0, 'r', 'g', 'b', 'c', 'y', 'm']
-        # self.colors = [0, 'r', 'g']
+        self.colors = [0, 'r', 'g', 'b', 'c', 'y', 'm']
         self.static_coords = []
         self.game = game
         self.level = level
@@ -29,33 +28,24 @@ class Algorithms:
 
                     counter += 1
 
-        self.colors = self.get_colors_from_game()
-
     def dfs(self, index):
-        if not checker.checkWin(self.level.statics, self.level.rectangles, self.game.points):
-            pos = self.empty_spaces[index]
-            coords = self.get_coords_from_index(pos)
+        pos = self.empty_spaces[index]
+        coords = self.get_coords_from_index(pos)
 
-            if self.game_board[coords[0]][coords[1]] == self.colors[len(self.colors) - 1]:
-                self.game_board[coords[0]][coords[1]] = self.colors[1]
-                self.draw_board_console()
-                self.game.removeTile(pos)
-                self.game.addPoint(pos, self.get_color_rgb(self.colors[1]))
-                self.game.reloadBoard()
-                # time.sleep(0.1)
+        if self.game_board[coords[0]][coords[1]] == self.colors[6]:
+            self.game_board[coords[0]][coords[1]] = self.colors[1]
+            self.draw_board_console()
+            # time.sleep(0.1)
 
-                if index - 1 < 0:
-                    return
+            if index - 1 < 0:
+                return
 
-                self.dfs(index - 1)
-            else:
-                self.game_board[coords[0]][coords[1]] = self.colors[self.colors.index(self.game_board[coords[0]][coords[1]]) + 1]
-                self.draw_board_console()
-                self.game.removeTile(pos)
-                self.game.addPoint(pos, self.get_color_rgb(self.colors[self.colors.index(self.game_board[coords[0]][coords[1]])]))
-                self.game.reloadBoard()
-                # time.sleep(0.1)
-                self.dfs(len(self.empty_spaces) - 1)
+            self.dfs(index - 1)
+        else:
+            self.game_board[coords[0]][coords[1]] = self.colors[self.colors.index(self.game_board[coords[0]][coords[1]]) + 1]
+            self.draw_board_console()
+            # time.sleep(0.1)
+            self.dfs(len(self.empty_spaces) - 1)
 
 
 
@@ -95,29 +85,6 @@ class Algorithms:
         #     main.Game.reloadBoard(self.game)
 
         return
-
-    def get_colors_from_game(self):
-        colors = [0]
-
-        for i, color in enumerate(self.static_coords):
-            if i % 2 == 0:
-                colors.append(color[2].lower())
-
-        return colors
-
-    def get_color_rgb(self, color):
-        if color == 'r':
-            return [255, 0, 0]
-        elif color == 'g':
-            return [0, 255, 0]
-        elif color == 'b':
-            return [0, 0, 255]
-        elif color == 'c':
-            return [0, 255, 255]
-        elif color == 'y':
-            return [255, 255, 0]
-        elif color == 'm':
-            return [255, 0, 255]
 
     def get_empty_spaces(self):
         empty_spaces = list(range(self.level.width * self.level.height))
@@ -213,3 +180,118 @@ class Algorithms:
             print('\n', end='')
 
         print('\n')
+
+    def checkNeighbours(self, point):
+        tile = point[0]
+        side = math.ceil(math.sqrt(len(self.level.rectangles)))
+        neighbours = 0
+        neighbours_array = []
+
+        if tile + 1 < 36 and tile != 5 and tile != 11 and tile != 17 and tile != 23 and tile != 29:
+            neighbours += 1
+            neighbours_array.append(tile + 1)
+        if tile - 1 > -1 and tile != 6 and tile != 12 and tile != 18 and tile != 24 and tile != 30:
+            neighbours += 1
+            neighbours_array.append(tile - 1)
+        if tile + side < 36:
+            neighbours += 1
+            neighbours_array.append(tile + side)
+        if tile - side > -1:
+            neighbours += 1
+            neighbours_array.append(tile - side)
+
+        return neighbours, neighbours_array
+
+    def makeConnection(self, point, forbiddenpoints):
+        neigbours, neigbours_array = self.checkNeighbours(point)
+        for x in range(neigbours):
+            if not self.checkIfStatic(neigbours_array[x]) and not self.checkIfPoint(
+                    neigbours_array[x]) and not self.checkIfForbiddenPoint(point[0], neigbours_array[x],
+                                                                           forbiddenpoints):
+                self.game.addPoint(neigbours_array[x], point[1])
+                if self.game.points:
+                    return self.game.points[-1]
+        return False
+
+    def checkIfStatic(self, tile):
+        for s in self.level.statics:
+            if s[0] == tile:
+                return True
+        return False
+
+    def checkIfPoint(self, tile):
+        if self.game.points:
+            for p in self.game.points:
+                if p[0] == tile:
+                    return True
+        return False
+
+    def checkIfForbiddenPoint(self, currentPoint, tile, forbiddenpoints):
+        if forbiddenpoints:
+            for p in forbiddenpoints:
+                for t in p[1]:
+                    if p[0] == currentPoint and t == tile:
+                        return True
+        return False
+
+    def checkIfEnd(self, point, endpoint):
+        neigbours, neigbours_array = self.checkNeighbours(point)
+        for x in range(neigbours):
+            if neigbours_array[x] == endpoint[0]:
+                return True
+        return False
+
+    def clearBoard(self, color):
+        for p in self.game.points:
+            if p[1] == color:
+                self.game.removeTile(p[0])
+
+    def backtrack(self):
+        visitedpoints = []
+        forbiddenpoints = []
+        checkedStatics = []
+        start = []
+        end = []
+        statics = self.level.statics
+
+        for static in statics:
+            if static not in checkedStatics:
+                start.append(static)
+                checkedStatics.append(start)
+                for static2 in statics:
+                    if static2[1] == static[1] and static2[0] != static[0]:
+                        end.append(static2)
+                        checkedStatics.append(static2)
+
+        visitedpoints.append(start[0])
+        while not self.checkIfEnd(visitedpoints[-1], end[0]):
+            test = self.makeConnection(visitedpoints[-1], forbiddenpoints)
+            if test:
+                visitedpoints.append(test)
+            else:
+                print("Else")
+                forbiddenpoints.append([visitedpoints[-2][0], [visitedpoints[-1][0]]])
+                self.game.removeTile(visitedpoints[-1][0])
+                visitedpoints.pop()
+
+        print("Visitedpoints l1", visitedpoints)
+        print("Forbiddenpoints l1", forbiddenpoints)
+        # forbiddenpoints.append([visitedpoints[-2][0], [visitedpoints[-1][0]]])
+        # self.clearBoard([255, 0, 0])
+        # visitedpoints.clear()
+        # visitedpoints.append(start[0])
+        #
+        # while not self.checkIfEnd(visitedpoints[-1], end[0]):
+        #     test = self.makeConnection(visitedpoints[-1], forbiddenpoints)
+        #     if test:
+        #         visitedpoints.append(test)
+        #     else:
+        #         print("Else")
+        #         forbiddenpoints.append([visitedpoints[-2][0], [visitedpoints[-1][0]]])
+        #         self.game.removeTile(visitedpoints[-1][0])
+        #         visitedpoints.pop()
+
+        print("Visitedpoints l2", visitedpoints)
+        print("Forbiddenpoints l2", forbiddenpoints)
+        print("Static neigh", self.checkNeighbours(self.level.statics[0]))
+        return
