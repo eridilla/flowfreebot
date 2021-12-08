@@ -5,7 +5,6 @@ import sys
 
 import checker
 import draw
-import levels
 import menu
 import mouseManager
 import algorithm

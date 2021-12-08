@@ -88,18 +88,14 @@ def checkConnection(rectangles, statics, points):
         checkedPoints = []
         previousPoint = []
         currentPoint = start[iterator]
-        print("Starting point",start[iterator])
-        print("End point", end[iterator])
         previousPoint.append(start[iterator])
 
         for x in range(36):
-            print("Currentpoint", currentPoint)
             check, checks = checkNeighbours(rectangles, currentPoint, points, statics)
 
             for c in checks:
                 if c == end[iterator]:
                     results.append(1)
-                    print("Added to results")
                     result_found = True
                     break
 

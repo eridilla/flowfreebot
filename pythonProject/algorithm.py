@@ -1,7 +1,8 @@
-import time
-
-import pygame, sys, math, json, numpy, webcolors, pyautogui, main
-
+import math
+import numpy
+import webcolors
+import random
+import checker
 
 class Algorithms:
     def __init__(self, game, level):
@@ -46,8 +47,6 @@ class Algorithms:
             self.draw_board_console()
             # time.sleep(0.1)
             self.dfs(len(self.empty_spaces) - 1)
-
-
 
         # if delta < 36:
         #     coords = self.get_coords_from_index(delta)
@@ -115,13 +114,13 @@ class Algorithms:
         neighbours = 0
         neighbours_array = []
 
-        if tile + 1 < 36 and tile != 5 and tile != 11 and tile != 17 and tile != 23 and tile != 29:
+        if tile + 1 < side*side and tile != side-1 and tile != side*2-1 and tile != side*3-1 and tile != side*4-1 and tile != side*5-1:
             neighbours += 1
             neighbours_array.append(tile + 1)
-        if tile - 1 > -1 and tile != 6 and tile != 12 and tile != 18 and tile != 24 and tile != 30:
+        if tile - 1 > -1 and tile != side and tile != side*2 and tile != side*3 and tile != side*4 and tile != side*5:
             neighbours += 1
             neighbours_array.append(tile - 1)
-        if tile + side < 36:
+        if tile + side < side*side:
             neighbours += 1
             neighbours_array.append(tile + side)
         if tile - side > -1:
@@ -132,10 +131,9 @@ class Algorithms:
 
     def makeConnection(self, point, forbiddenpoints):
         neigbours, neigbours_array = self.checkNeighbours(point)
+        random.shuffle(neigbours_array)
         for x in range(neigbours):
-            if not self.checkIfStatic(neigbours_array[x]) and not self.checkIfPoint(
-                    neigbours_array[x]) and not self.checkIfForbiddenPoint(point[0], neigbours_array[x],
-                                                                           forbiddenpoints):
+            if not self.checkIfStatic(neigbours_array[x]) and not self.checkIfPoint(neigbours_array[x]) and not self.checkIfForbiddenPoint(point[0], neigbours_array[x], forbiddenpoints):
                 self.game.addPoint(neigbours_array[x], point[1])
                 if self.game.points:
                     return self.game.points[-1]
@@ -169,18 +167,36 @@ class Algorithms:
                 return True
         return False
 
+    def checkIfEndConnected(self, endpoint):
+        for p in self.game.points:
+            neigbours, neigbours_array = self.checkNeighbours(p)
+            for x in range(neigbours):
+                if neigbours_array[x] == endpoint[0]:
+                    return True
+        return False
+
     def clearBoard(self, color):
         for p in self.game.points:
             if p[1] == color:
                 self.game.removeTile(p[0])
 
+    def clearForbiddenPoints(self, forbiddenpoints):
+        newForbiddenPoints = []
+        if forbiddenpoints:
+            for f in forbiddenpoints:
+                for p in self.game.points:
+                    if p[0] == f[0]:
+                        newForbiddenPoints.append(f)
+        return newForbiddenPoints
+
     def backtrack(self):
         visitedpoints = []
         forbiddenpoints = []
-        checkedStatics = []
         start = []
         end = []
+        checkedStatics = []
         statics = self.level.statics
+        totalvisitedcount = 0
 
         for static in statics:
             if static not in checkedStatics:
@@ -191,35 +207,30 @@ class Algorithms:
                         end.append(static2)
                         checkedStatics.append(static2)
 
-        visitedpoints.append(start[0])
-        while not self.checkIfEnd(visitedpoints[-1], end[0]):
-            test = self.makeConnection(visitedpoints[-1], forbiddenpoints)
-            if test:
-                visitedpoints.append(test)
-            else:
-                print("Else")
-                forbiddenpoints.append([visitedpoints[-2][0], [visitedpoints[-1][0]]])
-                self.game.removeTile(visitedpoints[-1][0])
-                visitedpoints.pop()
+        while not checker.checkWin(self.level.statics, self.level.rectangles, self.game.points):
+            visitedpoints.clear()
+            forbiddenpoints.clear()
+            iterator = 0
+            self.game.points.clear()
+            while iterator < len(start):
+                visitedpoints.append(start[iterator])
+                while not self.checkIfEnd(visitedpoints[-1], end[iterator]):
+                    test = self.makeConnection(visitedpoints[-1], forbiddenpoints)
+                    totalvisitedcount += 1
+                    print("Total visited", totalvisitedcount)
+                    if test:
+                        visitedpoints.append(test)
+                    else:
+                        if self.checkIfEndConnected(end[iterator]) or len(visitedpoints) < 2:
+                            visitedpoints.clear()
+                            break
+                        fp = [visitedpoints[-2][0], [visitedpoints[-1][0]]]
+                        forbiddenpoints.append(fp)
+                        self.game.removeTile(visitedpoints[-1][0])
+                        visitedpoints.pop()
+                forbiddenpoints = self.clearForbiddenPoints(forbiddenpoints)
 
-        print("Visitedpoints l1", visitedpoints)
-        print("Forbiddenpoints l1", forbiddenpoints)
-        # forbiddenpoints.append([visitedpoints[-2][0], [visitedpoints[-1][0]]])
-        # self.clearBoard([255, 0, 0])
-        # visitedpoints.clear()
-        # visitedpoints.append(start[0])
-        #
-        # while not self.checkIfEnd(visitedpoints[-1], end[0]):
-        #     test = self.makeConnection(visitedpoints[-1], forbiddenpoints)
-        #     if test:
-        #         visitedpoints.append(test)
-        #     else:
-        #         print("Else")
-        #         forbiddenpoints.append([visitedpoints[-2][0], [visitedpoints[-1][0]]])
-        #         self.game.removeTile(visitedpoints[-1][0])
-        #         visitedpoints.pop()
+                visitedpoints.clear()
+                iterator += 1
 
-        print("Visitedpoints l2", visitedpoints)
-        print("Forbiddenpoints l2", forbiddenpoints)
-        print("Static neigh", self.checkNeighbours(self.level.statics[0]))
         return
