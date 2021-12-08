@@ -94,83 +94,11 @@ class Algorithms:
 
         return empty_spaces
 
-    def get_index_from_color(self, color):
-        for i, colorX in enumerate(self.colors):
-            if colorX == color:
-                return i
-
-    def delta_is_static(self, delta):
-        for static in self.level.statics:
-            if static[0] == delta:
-                return True
-
-        return False
-
     def get_coords_from_index(self, index):
         for i in range(self.level.height):
             for j in range(self.level.width):
                 if index == self.game_board_enum[i][j]:
                     return [i, j]
-
-    def generate_line(self, static):
-        moves_made = []
-        currentpos = [static[0], static[1]]
-        return
-
-    def check_end(self, currentpos, color):
-        if currentpos[1] + 1 == color:
-            self.move(currentpos, 'E')
-            return
-
-        if currentpos[1] - 1 == color:
-            self.move(currentpos, 'W')
-            return
-
-        if currentpos[0] + 1 == color:
-            self.move(currentpos, 'S')
-            return
-
-        if currentpos[0] - 1 == color:
-            self.move(currentpos, 'N')
-            return
-
-    def move(self, currentpos, direction):
-        if direction == 'E':
-            currentpos = [currentpos[0], currentpos[1] + 1]
-            return currentpos
-
-        if direction == 'W':
-            currentpos = [currentpos[0], currentpos[1] - 1]
-            return currentpos
-
-        if direction == 'S':
-            currentpos = [currentpos[0] + 1, currentpos[1]]
-            return currentpos
-
-        if direction == 'N':
-            currentpos = [currentpos[0] - 1, currentpos[1]]
-            return currentpos
-
-    def check_possible_moves(self, currentpos):
-        possible_moves = []
-
-        if currentpos[1] + 1 < self.level.width:
-            if self.game_board[currentpos[0]][currentpos[1] + 1] == 0:
-                possible_moves.append('E')
-
-        if currentpos[1] - 1 >= 0:
-            if self.game_board[currentpos[0]][currentpos[1] - 1] == 0:
-                possible_moves.append('W')
-
-        if currentpos[0] + 1 < self.level.height:
-            if self.game_board[currentpos[0] + 1][currentpos[1]] == 0:
-                possible_moves.append('S')
-
-        if currentpos[0] - 1 >= 0:
-            if self.game_board[currentpos[0] - 1][currentpos[1]] == 0:
-                possible_moves.append('N')
-
-        return possible_moves
 
     def draw_board_console(self):
         for x in range(self.level.height):
