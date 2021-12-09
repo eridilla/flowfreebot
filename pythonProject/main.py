@@ -83,8 +83,7 @@ class Game:
         algorithms = algorithm.Algorithms(self, self.level)
 
         if self.graphicsManager.rectangles[0].collidepoint(pos):
-            sys.setrecursionlimit(2857)
-            algorithms.dfs(len(algorithms.empty_spaces) - 1)
+            algorithms.dfs()
 
         if self.graphicsManager.rectangles[1].collidepoint(pos):
             algorithms.backtrack()
