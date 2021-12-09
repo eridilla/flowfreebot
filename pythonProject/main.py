@@ -10,7 +10,7 @@ import mouseManager
 import algorithm
 
 
-class Game:
+class Game():
     def __init__(self):
         self.dev = True
         self.testingMode = False
@@ -59,7 +59,6 @@ class Game:
         self.reloadBoard()
 
     def reloadBoard(self):
-        # self.buttons = self.graphicsManager.drawBoard(self.level)
         self.graphicsManager.drawBoard(self.level)
 
         for static in self.level.statics:

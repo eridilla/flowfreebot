@@ -3,10 +3,10 @@ import time
 from datetime import datetime
 
 import numpy
-import pygame.display
 import webcolors
 import random
 import checker
+import pygame
 
 
 class Algorithms:
@@ -157,7 +157,7 @@ class Algorithms:
         for x in range(neigbours):
             if not self.checkIfStatic(neigbours_array[x]) and not self.checkIfPoint(neigbours_array[x]) and not self.checkIfForbiddenPoint(point[0], neigbours_array[x], forbiddenpoints):
                 self.game.addPoint(neigbours_array[x], point[1])
-                pygame.display.update()
+                self.game.reloadBoard()
                 time.sleep(0.05)
                 if self.game.points:
                     return self.game.points[-1]
@@ -195,7 +195,15 @@ class Algorithms:
         for p in self.game.points:
             neigbours, neigbours_array = self.checkNeighbours(p)
             for x in range(neigbours):
-                if neigbours_array[x] == endpoint[0]:
+                if neigbours_array[x] == endpoint[0] and endpoint[1] == p[1]:
+                    return True
+        return False
+
+    def checkIfStartConnected(self, startpoint):
+        for p in self.game.points:
+            neigbours, neigbours_array = self.checkNeighbours(p)
+            for x in range(neigbours):
+                if neigbours_array[x] == startpoint[0]:
                     return True
         return False
 
@@ -245,7 +253,13 @@ class Algorithms:
                     if test:
                         visitedpoints.append(test)
                     else:
+                        if self.checkIfEndConnected(end[iterator]):
+                            visitedpoints.clear()
+                            break
                         if self.checkIfEndConnected(end[iterator]) or len(visitedpoints) < 2:
+                            self.clearBoard(end[iterator][1])
+                            self.clearBoard(end[iterator-1][1])
+                            iterator -= 2
                             visitedpoints.clear()
                             break
                         fp = [visitedpoints[-2][0], [visitedpoints[-1][0]]]

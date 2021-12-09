@@ -24,38 +24,32 @@ class GraphicsManager():
         screenWidth, screenHeight = self.logic.screen.get_size()
         font = pygame.font.SysFont("framd.ttf", 48)
 
-        # rectangles = []
         dfs_button = pygame.Rect(screenWidth - 200, screenHeight/5, 100, 40)
         dfs_surface = font.render("DFS", True, (0, 0, 0))
-        #size = font.size("DFS")
         pygame.draw.rect(self.logic.screen, (255,255,255), dfs_button)
         self.logic.screen.blit(dfs_surface, (screenWidth - 200, screenHeight/5))
         self.rectangles.append(dfs_button)
 
         bt_button = pygame.Rect(screenWidth - 200, screenHeight / 5 + 60, 100, 40)
         bt_surface = font.render("BT", True, (0, 0, 0))
-        #size = font.size("BT")
         pygame.draw.rect(self.logic.screen, (255, 255, 255), bt_button)
         self.logic.screen.blit(bt_surface, (screenWidth - 200, screenHeight / 5+60))
         self.rectangles.append(bt_button)
 
         ft_button = pygame.Rect(screenWidth - 200, screenHeight / 5 + 60 * 2, 100, 40)
         ft_surface = font.render("FT", True, (0, 0, 0))
-        # size = font.size("FT")
         pygame.draw.rect(self.logic.screen, (255, 255, 255), ft_button)
         self.logic.screen.blit(ft_surface, (screenWidth - 200, screenHeight / 5 + 60 * 2))
         self.rectangles.append(ft_button)
 
         reset_button = pygame.Rect(screenWidth - 200, screenHeight / 5 + 60 * 3, 100, 40)
         reset_surface = font.render("Reset", True, (0, 0, 0))
-        # size = font.size("Reset")
         pygame.draw.rect(self.logic.screen, (255, 255, 255), reset_button)
         self.logic.screen.blit(reset_surface, (screenWidth - 200, screenHeight / 5 + 60 * 3))
         self.rectangles.append(reset_button)
 
         menu_button = pygame.Rect(screenWidth - 200, screenHeight / 5 + 60 * 4, 100, 40)
         menu_surface = font.render("Menu", True, (0, 0, 0))
-        # size = font.size("Menu")
         pygame.draw.rect(self.logic.screen, (255, 255, 255), menu_button)
         self.logic.screen.blit(menu_surface, (screenWidth - 200, screenHeight / 5 + 60 * 4))
         self.rectangles.append(menu_button)
@@ -69,22 +63,6 @@ class GraphicsManager():
     def drawEndStatics(self, tile, colour):
         centrePoint = self.level.centrePoints[tile]
         pygame.draw.circle(self.logic.screen, colour, centrePoint, math.floor(self.level.length / 3))
-
-    # def drawLine(self, tile1, tile2, colour):
-    #
-    #     tile1Centre = self.level.centrePoints[tile1]
-    #     tile2Centre = self.level.centrePoints[tile2]
-    #
-    #     width = math.floor(self.level.length / 4 + 0.5)
-    #
-    #     if width % 2 == 0:
-    #         width += 1
-    #     self.radius = math.floor(width / 2)
-    #
-    #     rect = pygame.draw.line(self.logic.screen, colour, tile1Centre, tile2Centre, width)
-    #
-    # def drawSmoothTurn(self, point, colour):
-    #     pygame.draw.circle(self.logic.screen, colour, point, self.radius)
 
     def drawWinScreen(self):
         screenWidth, screenHeight = self.logic.screen.get_size()
