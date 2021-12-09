@@ -1,5 +1,6 @@
 import math
 import time
+from datetime import datetime
 
 import numpy
 import pygame.display
@@ -7,11 +8,11 @@ import webcolors
 import random
 import checker
 
+
 class Algorithms:
     def __init__(self, game, level):
         self.game_board = [[0 for y in range(level.height)] for x in range(level.width)]
         self.game_board_enum = numpy.arange(level.width * level.height).reshape(level.height, level.width)
-        self.colors = [0, 'r', 'g', 'b', 'c', 'y', 'm']
         self.static_coords = []
         self.game = game
         self.level = level
@@ -32,61 +33,79 @@ class Algorithms:
 
                     counter += 1
 
-    def dfs(self, index):
-        pos = self.empty_spaces[index]
-        coords = self.get_coords_from_index(pos)
+        self.colors = self.get_colors_from_game()
 
-        if self.game_board[coords[0]][coords[1]] == self.colors[6]:
-            self.game_board[coords[0]][coords[1]] = self.colors[1]
-            self.draw_board_console()
-            # time.sleep(0.1)
+    def dfs(self):
+        index = len(self.empty_spaces) - 1
+        steps = 0
+        start = datetime.now()
 
-            if index - 1 < 0:
-                return
+        print("Start: ", start)
 
-            self.dfs(index - 1)
-        else:
-            self.game_board[coords[0]][coords[1]] = self.colors[self.colors.index(self.game_board[coords[0]][coords[1]]) + 1]
-            self.draw_board_console()
-            # time.sleep(0.1)
-            self.dfs(len(self.empty_spaces) - 1)
+        while not checker.checkWin(self.level.statics, self.level.rectangles, self.game.points):
+            pos = self.empty_spaces[index]
+            coords = self.get_coords_from_index(pos)
 
-        # if delta < 36:
-        #     coords = self.get_coords_from_index(delta)
-        #
-        #     if self.game_board[coords[0]][coords[1]] == 0:
-        #         self.game.addPoint(delta, [255, 0, 0])
-        #         self.game.reloadBoard()
-        #
-        #     delta += 1
-        #     self.dfs(delta)
+            mousepos = pygame.mouse.get_pos()
+            if self.game.graphicsManager.rectangles[4].collidepoint(mousepos):
+                self.game.__init__()
 
-        # self.draw_board_console()
-        #
-        # for i in reversed(range(self.level.height)):
-        #     for j in reversed(range(self.level.width)):
-        #         if self.game_board[i][j] == 0:
-        #             self.game_board[i][j] = 'A'
-        #             self.draw_board_console()
-        #             self.game.addPoint(self.game_board_enum[i][j], [255, 0, 0])
-        #             self.game.reloadBoard()
-        #             time.sleep(0.1)
+            if self.game_board[coords[0]][coords[1]] == self.colors[len(self.colors) - 1]:
+                self.game_board[coords[0]][coords[1]] = self.colors[1]
+                steps += 1
+                print(steps)
+                self.draw_board_console()
+                self.game.removeTile(pos)
+                self.game.addPoint(pos, self.get_color_rgb(self.colors[1]))
+                pygame.display.update()
 
+                if index - 1 < 0:
+                    return
 
+                index -= 1
 
-        # while True:
-        #     if currentpos[1]+1 < self.level.width:
-        #         currentpos[1] += 1
-        #         self.game_board[currentpos[0]][currentpos[1]] = static[2]
-        #         self.draw_board_console()
-        #     else:
-        #         break
+            else:
+                self.game_board[coords[0]][coords[1]] = self.colors[
+                    self.colors.index(self.game_board[coords[0]][coords[1]]) + 1]
+                steps += 1
+                print(steps)
+                self.draw_board_console()
+                self.game.removeTile(pos)
+                self.game.addPoint(pos, self.get_color_rgb(
+                    self.colors[self.colors.index(self.game_board[coords[0]][coords[1]])]))
+                pygame.display.update()
+                index = len(self.empty_spaces) - 1
 
-        # for x in range(5):
-        #     main.Game.addConnection(self.game, x, x + 1, [255, 0, 0])
-        #     main.Game.reloadBoard(self.game)
+        end = datetime.now()
+
+        print("Start: ", start)
+        print("End: ", end)
+        print("Steps: ", steps)
 
         return
+
+    def get_colors_from_game(self):
+        colors = [0]
+
+        for i, color in enumerate(self.static_coords):
+            if i % 2 == 0:
+                colors.append(color[2].lower())
+
+        return colors
+
+    def get_color_rgb(self, color):
+        if color == 'r':
+            return [255, 0, 0]
+        elif color == 'g':
+            return [0, 255, 0]
+        elif color == 'b':
+            return [0, 0, 255]
+        elif color == 'c':
+            return [0, 255, 255]
+        elif color == 'y':
+            return [255, 255, 0]
+        elif color == 'm':
+            return [255, 0, 255]
 
     def get_empty_spaces(self):
         empty_spaces = list(range(self.level.width * self.level.height))
