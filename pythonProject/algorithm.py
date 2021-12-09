@@ -1,5 +1,8 @@
 import math
+import time
+
 import numpy
+import pygame.display
 import webcolors
 import random
 import checker
@@ -135,6 +138,8 @@ class Algorithms:
         for x in range(neigbours):
             if not self.checkIfStatic(neigbours_array[x]) and not self.checkIfPoint(neigbours_array[x]) and not self.checkIfForbiddenPoint(point[0], neigbours_array[x], forbiddenpoints):
                 self.game.addPoint(neigbours_array[x], point[1])
+                pygame.display.update()
+                time.sleep(0.05)
                 if self.game.points:
                     return self.game.points[-1]
         return False
