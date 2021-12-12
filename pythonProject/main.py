@@ -25,6 +25,7 @@ class Game():
         self.mouseManager = mouseManager.MouseManager(self)
         self.graphicsManager = draw.GraphicsManager(self)
         self.points_visited = 0
+        self.points_expanded = 0
         self.time = 0
 
         self.loadLevel(self.level)
@@ -64,7 +65,7 @@ class Game():
         self.reloadBoard()
 
     def reloadBoard(self):
-        self.graphicsManager.drawBoard(self.level, self.points_visited, self.time)
+        self.graphicsManager.drawBoard(self.level, self.points_visited, self.time, self.points_expanded)
         for static in self.level.statics:
             tile, colour = static
             self.graphicsManager.drawEndStatics(tile, colour)
@@ -95,6 +96,7 @@ class Game():
             #print("\nReloading game\n")
             self.points.clear()
             self.points_visited = 0
+            self.points_expanded = 0
             self.reloadBoard()
             return
 

@@ -259,6 +259,7 @@ class Algorithms:
         checkedStatics = []
         statics = self.level.statics
         wrongSollutions = []
+        previousPoints = 0
 
         for static in statics:
             if static not in checkedStatics:
@@ -281,6 +282,7 @@ class Algorithms:
                         if event.type == KEYDOWN:
                             if event.key == K_ESCAPE:
                                 self.game.points_visited = 0
+                                self.game.points_expanded = 0
                                 return
                     test = self.makeConnection(visitedpoints[-1], forbiddenpoints)
                     if test:
@@ -315,6 +317,7 @@ class Algorithms:
                         self.game.reloadBoard()
                         time.sleep(0.05)
                         visitedpoints.pop()
+                        self.game.points_expanded += 1
 
                 forbiddenpoints = self.clearForbiddenPoints(forbiddenpoints)
                 visitedpoints.clear()

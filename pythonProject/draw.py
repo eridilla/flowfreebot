@@ -6,7 +6,7 @@ class GraphicsManager():
         self.level = gameLogic.level
         self.rectangles = []
 
-    def drawBoard(self, level, points_visited, time):
+    def drawBoard(self, level, points_visited, time, points_expanded):
 
         length = level.length
 
@@ -54,15 +54,20 @@ class GraphicsManager():
         self.logic.screen.blit(menu_surface, (screenWidth - 200, screenHeight / 5 + 60 * 4))
         self.rectangles.append(menu_button)
 
-        stat_background = pygame.Rect(100, screenHeight - 110, 3000, 40)
+        stat_background = pygame.Rect(100, screenHeight - 200, 3000, 40)
         pygame.draw.rect(self.logic.screen, (0, 0, 0), stat_background)
-        points_visited_surface = font.render("Počet uzlov: " + str(points_visited), True, (255, 255, 255))
-        self.logic.screen.blit(points_visited_surface, (100, screenHeight - 110, 300, 40))
+        points_visited_surface = font.render("Počet nájdených uzlov: " + str(points_visited), True, (255, 255, 255))
+        self.logic.screen.blit(points_visited_surface, (100, screenHeight - 200, 300, 40))
 
-        time_background = pygame.Rect(100, screenHeight - 60, 3000, 40)
+        time_background = pygame.Rect(100, screenHeight - 150, 3000, 40)
         pygame.draw.rect(self.logic.screen, (0, 0, 0), time_background)
         time_surface = font.render("Čas: " + str(round((pygame.time.get_ticks()-time)/1000, 2)) + "s", True, (255, 255, 255))
-        self.logic.screen.blit(time_surface, (100, screenHeight - 60, 300, 40))
+        self.logic.screen.blit(time_surface, (100, screenHeight - 150, 300, 40))
+
+        stat_background2 = pygame.Rect(100, screenHeight - 100, 3000, 40)
+        pygame.draw.rect(self.logic.screen, (0, 0, 0), stat_background2)
+        points_visited_surface2 = font.render("Počet expandovaných uzlov: " + str(points_expanded), True, (255, 255, 255))
+        self.logic.screen.blit(points_visited_surface2, (100, screenHeight - 100, 300, 40))
 
         return
 
