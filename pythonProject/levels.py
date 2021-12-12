@@ -5,7 +5,7 @@ import pygame
 class Level():
     def __init__(self, points, width, height):
         self.length = self.__getSideLength(width, height)
-        self.screenSize = self.length * (width + 2) + 200, self.length * (height + 2)
+        self.screenSize = self.length * (width + 2) + 200, self.length * (height + 2) + 50
         self.width = width
         self.height = height
         self.statics = self.__createStatics(points)

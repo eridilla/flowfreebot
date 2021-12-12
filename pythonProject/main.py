@@ -38,6 +38,8 @@ class Game():
         screen.set_caption("FlowFree")
         self.screen = screen.set_mode(level.screenSize)
 
+        self.time = pygame.time.get_ticks()
+
         self.reloadBoard()
 
         # if self.dev:

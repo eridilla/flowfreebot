@@ -39,6 +39,8 @@ class Algorithms:
         self.colors = self.get_colors_from_game()
 
     def dfs(self):
+        self.clearBoard(self.colors)
+
         index = len(self.empty_spaces) - 1
         steps = 0
         start = datetime.now()
@@ -46,12 +48,16 @@ class Algorithms:
         print("Start: ", start)
 
         while not checker.checkWin(self.level.statics, self.level.rectangles, self.game.points):
+            self.game.points_visited += 1
+
             pos = self.empty_spaces[index]
             coords = self.get_coords_from_index(pos)
 
-            mousepos = pygame.mouse.get_pos()
-            if self.game.graphicsManager.rectangles[4].collidepoint(mousepos):
-                self.game.__init__()
+            for event in pygame.event.get():
+                if event.type == KEYDOWN:
+                    if event.key == K_ESCAPE:
+                        self.game.points_visited = 0
+                        return
 
             if self.game_board[coords[0]][coords[1]] == self.colors[len(self.colors) - 1]:
                 self.game_board[coords[0]][coords[1]] = self.colors[1]
