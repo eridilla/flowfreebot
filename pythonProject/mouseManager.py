@@ -14,7 +14,3 @@ class MouseManager():
 
         elif event.type == pygame.MOUSEBUTTONUP:
             self.mousePressed = False
-
-
-        # elif self.mousePressed:
-        #     self.game.mouseMoved()

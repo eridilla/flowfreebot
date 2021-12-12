@@ -5,6 +5,9 @@ from datetime import datetime
 import numpy
 import webcolors
 import random
+
+from pygame import KEYDOWN, K_ESCAPE
+
 import checker
 import pygame
 
@@ -157,6 +160,7 @@ class Algorithms:
         for x in range(neigbours):
             if not self.checkIfStatic(neigbours_array[x]) and not self.checkIfPoint(neigbours_array[x]) and not self.checkIfForbiddenPoint(point[0], neigbours_array[x], forbiddenpoints):
                 self.game.addPoint(neigbours_array[x], point[1])
+                self.game.points_visited += 1
                 self.game.reloadBoard()
                 time.sleep(0.05)
                 if self.game.points:
@@ -199,18 +203,12 @@ class Algorithms:
                     return True
         return False
 
-    def checkIfStartConnected(self, startpoint):
-        for p in self.game.points:
-            neigbours, neigbours_array = self.checkNeighbours(p)
-            for x in range(neigbours):
-                if neigbours_array[x] == startpoint[0]:
-                    return True
-        return False
+    def clearBoard(self, colors):
 
-    def clearBoard(self, color):
-        for p in self.game.points:
-            if p[1] == color:
-                self.game.removeTile(p[0])
+        for c in colors:
+            for p in self.game.points:
+                if p[1] == c:
+                    self.game.removeTile(p[0])
 
     def clearForbiddenPoints(self, forbiddenpoints):
         newForbiddenPoints = []
@@ -221,6 +219,32 @@ class Algorithms:
                         newForbiddenPoints.append(f)
         return newForbiddenPoints
 
+    def checkIfWrong(self, wrongSollutions):
+        result = 0
+        for points in wrongSollutions:
+            count = 0
+            if len(points) != len(self.game.points):
+                continue
+            for p1 in points:
+                for p2 in self.game.points:
+                    if p1[0] == p2[0] and p1[1] == p2[1]:
+                        count += 1
+            if count == len(points):
+                result += 1
+        return result
+
+    # def checkBlockingColors(self, color):
+    #     colors = []
+    #     for p in self.game.points:
+    #         if p[1] == color:
+    #             neigbours, neighbour_lists = self.checkNeighbours(p)
+    #             for n in neighbour_lists:
+    #                 for p2 in self.game.points:
+    #                     if p2[0] == n and p2[1] != color:
+    #                         colors.append(p2[1])
+    #
+    #     print("Colors", colors)
+
     def backtrack(self):
         visitedpoints = []
         forbiddenpoints = []
@@ -228,7 +252,7 @@ class Algorithms:
         end = []
         checkedStatics = []
         statics = self.level.statics
-        totalvisitedcount = 0
+        wrongSollutions = []
 
         for static in statics:
             if static not in checkedStatics:
@@ -247,28 +271,46 @@ class Algorithms:
             while iterator < len(start):
                 visitedpoints.append(start[iterator])
                 while not self.checkIfEnd(visitedpoints[-1], end[iterator]):
+                    for event in pygame.event.get():
+                        if event.type == KEYDOWN:
+                            if event.key == K_ESCAPE:
+                                self.game.points_visited = 0
+                                return
                     test = self.makeConnection(visitedpoints[-1], forbiddenpoints)
-                    totalvisitedcount += 1
-                    print("Total visited", totalvisitedcount)
                     if test:
                         visitedpoints.append(test)
                     else:
                         if self.checkIfEndConnected(end[iterator]):
                             visitedpoints.clear()
                             break
-                        if self.checkIfEndConnected(end[iterator]) or len(visitedpoints) < 2:
-                            self.clearBoard(end[iterator][1])
-                            self.clearBoard(end[iterator-1][1])
-                            iterator -= 2
-                            visitedpoints.clear()
+                        if len(visitedpoints) < 2:
+                            if self.checkIfWrong(wrongSollutions) > 1:
+                                value = 3
+                                colors = []
+                                for i in reversed(range(value)):
+                                    colors.append(end[iterator-i][1])
+                                self.clearBoard(colors)
+                                if iterator-value < -1:
+                                    iterator = -1
+                                else:
+                                    iterator -= 3
+                                #wrongSollutions.clear()
+                                break
+                            wrongSollutions.append(self.game.points)
+                            self.clearBoard([end[iterator][1], end[iterator-1][1]])
+                            if iterator-2 < -1:
+                                iterator = -1
+                            else:
+                                iterator -= 2
                             break
                         fp = [visitedpoints[-2][0], [visitedpoints[-1][0]]]
                         forbiddenpoints.append(fp)
                         self.game.removeTile(visitedpoints[-1][0])
+                        self.game.reloadBoard()
+                        time.sleep(0.05)
                         visitedpoints.pop()
-                forbiddenpoints = self.clearForbiddenPoints(forbiddenpoints)
 
+                forbiddenpoints = self.clearForbiddenPoints(forbiddenpoints)
                 visitedpoints.clear()
                 iterator += 1
-
         return

@@ -6,7 +6,7 @@ class GraphicsManager():
         self.level = gameLogic.level
         self.rectangles = []
 
-    def drawBoard(self, level):
+    def drawBoard(self, level, points_visited, time):
 
         length = level.length
 
@@ -53,6 +53,16 @@ class GraphicsManager():
         pygame.draw.rect(self.logic.screen, (255, 255, 255), menu_button)
         self.logic.screen.blit(menu_surface, (screenWidth - 200, screenHeight / 5 + 60 * 4))
         self.rectangles.append(menu_button)
+
+        stat_background = pygame.Rect(screenWidth - 200, screenHeight / 5 + 60 * 6, 300, 40)
+        pygame.draw.rect(self.logic.screen, (0, 0, 0), stat_background)
+        points_visited_surface = font.render("Počet uzlov: " + str(points_visited), True, (255, 255, 255))
+        self.logic.screen.blit(points_visited_surface, (screenWidth - 280, screenHeight / 5 + 60 * 6))
+
+        time_background = pygame.Rect(screenWidth - 200, screenHeight / 5 + 60 * 7, 300, 40)
+        pygame.draw.rect(self.logic.screen, (0, 0, 0), time_background)
+        time_surface = font.render("Čas: " + str(round((pygame.time.get_ticks()-time)/1000, 2)) + "s", True, (255, 255, 255))
+        self.logic.screen.blit(time_surface, (screenWidth - 280, screenHeight / 5 + 60 * 7))
 
         return
 

@@ -24,24 +24,27 @@ class Game():
 
         self.mouseManager = mouseManager.MouseManager(self)
         self.graphicsManager = draw.GraphicsManager(self)
+        self.points_visited = 0
+        self.time = 0
 
         self.loadLevel(self.level)
         self.selectedColour = [0, 0, 0]
 
         self.startGame = True
+        self.startAlg = False
 
     def loadLevel(self, level):
         screen = pygame.display
-        screen.set_caption("Flow")
+        screen.set_caption("FlowFree")
         self.screen = screen.set_mode(level.screenSize)
 
         self.reloadBoard()
 
-        if self.dev:
-            print("Level loaded")
-            print("Rectangles:", self.level.rectangles)
-            print("Statics:", self.level.statics)
-            print("Centre points:", self.level.centrePoints)
+        # if self.dev:
+        #     print("Level loaded")
+        #     print("Rectangles:", self.level.rectangles)
+        #     print("Statics:", self.level.statics)
+        #     print("Centre points:", self.level.centrePoints)
 
     def removeTile(self, tile):
         for array in self.level.statics:
@@ -59,8 +62,7 @@ class Game():
         self.reloadBoard()
 
     def reloadBoard(self):
-        self.graphicsManager.drawBoard(self.level)
-
+        self.graphicsManager.drawBoard(self.level, self.points_visited, self.time)
         for static in self.level.statics:
             tile, colour = static
             self.graphicsManager.drawEndStatics(tile, colour)
@@ -88,8 +90,9 @@ class Game():
             algorithms.backtrack()
 
         if self.graphicsManager.rectangles[3].collidepoint(pos):
-            print("\nReloading game\n")
-            self.points = []
+            #print("\nReloading game\n")
+            self.points.clear()
+            self.points_visited = 0
             self.reloadBoard()
             return
 
@@ -103,10 +106,10 @@ class Game():
                 for array in self.level.statics:
                     if array[0] == i:
                         self.mouseManager.mousePressed = True
-                        if self.dev: print("Mouse pressed on a static tile")
+                        # if self.dev: print("Mouse pressed on a static tile")
 
                         self.selectedColour = array[1]
-                        if self.dev: print("Selected colour:", self.selectedColour)
+                        # if self.dev: print("Selected colour:", self.selectedColour)
 
                         return
 
@@ -129,7 +132,6 @@ if __name__ == "__main__":
                 if event.type == pygame.QUIT:
                     if game.dev: print("Exiting..")
                     sys.exit()
-
                 game.mouseManager.mouseTrack(event)
-
+            game.time = pygame.time.get_ticks()
             pygame.display.flip()

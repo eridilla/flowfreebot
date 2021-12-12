@@ -15,23 +15,23 @@ class Menu():
         self.rectangles = self.drawMenu()
         self.eventman = EventManager()
         self.mainLoop()
-        print("Exited mainloop in menu")
+        # print("Exited mainloop in menu")
 
     def mainLoop(self):
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    print("Exiting..")
+                    # print("Exiting..")
                     sys.exit()
 
                 response = self.eventman.processEvent(event, self.menu, self.rectangles)
                 if response == "back":
                     return
                 elif type(response) == type(lambda: print()):
-                    print("Trying to load level")
+                    # print("Trying to load level")
                     self.main.level = response()
                     self.main.initialise()
-                    print("return")
+                    # print("return")
                     return
 
             pygame.display.flip()
@@ -99,11 +99,11 @@ class EventManager():
     def processEvent(self, event, menu, rectangles):
         if event.type == pygame.MOUSEBUTTONDOWN:
             pos = pygame.mouse.get_pos()
-            print("Mouse pressed")
+            # print("Mouse pressed")
             if menu == "levels":
                 for i, rectangle in enumerate(rectangles):
                     if rectangle.collidepoint(pos):
-                        print("Level nr " + str(i))
+                        # print("Level nr " + str(i))
 
                         if i == len(rectangles):
                             return "back"
